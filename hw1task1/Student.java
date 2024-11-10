@@ -1,17 +1,18 @@
 import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Stack;
 import java.util.function.Predicate;
 
 class Student<T> {
 
-  private LinkedList<T> assessments;
+  private LinkedList<T> grades;
   private String name;
-  private final Predicate<T> assessment_validator;
+  private final Predicate<T> gradeValidator;
 
   private Stack<HistoryEntry> history;
-  private Stack<HistoryEntry> reverse_history;
-  private Action current_action = Action.ActionOrdinary;
+  private Stack<HistoryEntry> reverseHistory;
+  private Action currentAction = Action.ActionOrdinary;
 
   public enum Action {
     ActionBack,
@@ -46,36 +47,36 @@ class Student<T> {
 
 
   public Student(String name, Predicate<T> validator) {
-    assessments = new LinkedList<>();
+    grades = new LinkedList<>();
     history = new Stack<>();
-    reverse_history = new Stack<>();
+    reverseHistory = new Stack<>();
     this.name = name;
-    assessment_validator = validator != null ? validator : assessment -> true;
+    gradeValidator = validator != null ? validator : grade -> true;
   }
 
   public Student(String name) {
-    this(name, assessment -> true);
+    this(name, grade -> true);
   }
 
-  public Student(String name, T[] assessments, Predicate<T> validator) {
+  public Student(String name, ArrayList<T> grades, Predicate<T> validator) {
     this(name, validator);
-    for (T assessment : assessments) {
-      add(assessment);
+    for (T grade : grades) {
+      add(grade);
     }
   }
 
-  public Student(String name, T[] assessments) {
-    this(name, assessments, assessment -> true);
+  public Student(String name, ArrayList<T> grades) {
+    this(name, grades, grade -> true);
   }
 
 
-  protected void check_assessment(T assessment) {
-    if (!assessment_validator.test(assessment)) {
-      throw new IllegalArgumentException("Некорректная оценка: " + assessment);
+  protected void checkGrade(T grade) {
+    if (!gradeValidator.test(grade)) {
+      throw new IllegalArgumentException("Некорректная оценка: " + grade);
     }
   }
 
-  protected void check_index(int index) {
+  protected void checkIndex(int index) {
     if (index < 0 || index >= size()) {
       throw new IndexOutOfBoundsException(
           "Индекс " + index
@@ -85,49 +86,53 @@ class Student<T> {
 
 
   public int size() {
-    return assessments.size();
+    return grades.size();
   }
 
-  public String get_name() {
+  public String getName() {
     return name;
   }
 
-  public void set_name(String s) {
-    add_history(new HistoryEntry("set_name", name));
+  public void setName(String s) {
+    addHistory(new HistoryEntry("setName", name));
     name = s;
   }
 
+  public ArrayList<T> getGrades() {
+    return new ArrayList<T>(grades);
+  }
+
   public T get(int index) {
-    check_index(index);
-    return assessments.get(index);
+    checkIndex(index);
+    return grades.get(index);
   }
 
   public void set(int index, T value) {
-    check_index(index);
-    check_assessment(value);
-    add_history(new HistoryEntry("set", index, value));
-    assessments.set(index, value);
+    checkIndex(index);
+    checkGrade(value);
+    addHistory(new HistoryEntry("set", index, value));
+    grades.set(index, value);
   }
 
 
-  public void add(int index, T assessment) {
+  public void add(int index, T grade) {
     if (index != size()) {
       // для возможности добавления нового элемент в самый конец
-      check_index(index);
+      checkIndex(index);
     }
-    check_assessment(assessment);
-    assessments.add(index, assessment);
-    add_history(new HistoryEntry("add", index));
+    checkGrade(grade);
+    grades.add(index, grade);
+    addHistory(new HistoryEntry("add", index));
   }
 
-  public void add(T assessment) {
-    add(size(), assessment);
+  public void add(T grade) {
+    add(size(), grade);
   }
 
   public void remove(int index) {
-    check_index(index);
-    add_history(new HistoryEntry("remove", index, assessments.get(index)));
-    assessments.remove(index);
+    checkIndex(index);
+    addHistory(new HistoryEntry("remove", index, grades.get(index)));
+    grades.remove(index);
   }
 
   public void remove() {
@@ -135,51 +140,51 @@ class Student<T> {
   }
 
 
-  private void add_history(HistoryEntry history_entry) {
+  private void addHistory(HistoryEntry historyEntry) {
     // действия отмены реализовано, как в браузерах, то есть
-    // надо очищать reverse_history при обычном действии, а
-    // при действии отмены надо добавлять его в history или reverse_history
-    switch (current_action) {
+    // надо очищать reverseHistory при обычном действии, а
+    // при действии отмены надо добавлять его в history или reverseHistory
+    switch (currentAction) {
       case Action.ActionOrdinary -> {
-        history.add(history_entry);
-        reverse_history.clear();
+        history.add(historyEntry);
+        reverseHistory.clear();
       }
-      case Action.ActionBack -> reverse_history.add(history_entry);
-      case Action.ActionForward -> history.add(history_entry);
+      case Action.ActionBack -> reverseHistory.add(historyEntry);
+      case Action.ActionForward -> history.add(historyEntry);
     }
   }
 
-  private boolean cancel_action() {
-    var source = current_action == Action.ActionBack ? history : reverse_history;
+  private boolean cancelAction() {
+    var source = currentAction == Action.ActionBack ? history : reverseHistory;
     if (source.empty()) {
-      current_action = Action.ActionOrdinary;
+      currentAction = Action.ActionOrdinary;
       return false;
     }
-    HistoryEntry history_entry = source.pop();
-    switch (history_entry.action) {
-      case "set_name" -> set_name((String) history_entry.value);
-      case "set" -> set(history_entry.index, (T) history_entry.value);
-      case "add" -> remove(history_entry.index);
-      case "remove" -> add(history_entry.index, (T) history_entry.value);
+    HistoryEntry historyEntry = source.pop();
+    switch (historyEntry.action) {
+      case "setName" -> setName((String) historyEntry.value);
+      case "set" -> set(historyEntry.index, (T) historyEntry.value);
+      case "add" -> remove(historyEntry.index);
+      case "remove" -> add(historyEntry.index, (T) historyEntry.value);
     }
-    current_action = Action.ActionOrdinary;
+    currentAction = Action.ActionOrdinary;
     return true;
   }
 
-  public boolean action_back() {
-    current_action = Action.ActionBack;
-    return cancel_action();
+  public boolean actionBack() {
+    currentAction = Action.ActionBack;
+    return cancelAction();
   }
 
-  public boolean action_forward() {
-    current_action = Action.ActionForward;
-    return cancel_action();
+  public boolean actionForward() {
+    currentAction = Action.ActionForward;
+    return cancelAction();
   }
 
 
   @Override
   public String toString() {
-    return name + ": " + assessments;
+    return name + ": " + grades;
   }
 
   @Override
@@ -190,12 +195,12 @@ class Student<T> {
     if (!(o instanceof Student<?> student)) {
       return false;
     }
-    return Objects.equals(assessments, student.assessments) && Objects.equals(
+    return Objects.equals(grades, student.grades) && Objects.equals(
         name, student.name);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(assessments, name);
+    return Objects.hash(grades, name);
   }
 }
