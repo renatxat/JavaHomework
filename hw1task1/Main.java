@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -5,6 +7,7 @@ public class Main {
   private static Student<Integer> student;
 
   public static void main(String[] args) {
+    // test();
     Scanner scanner = new Scanner(System.in);
     try {
       while (true) {
@@ -76,14 +79,14 @@ public class Main {
       }
       case 5 -> System.out.println(student);
       case 6 -> {
-        if (student.actionBack()) {
+        if (student.undo()) {
           System.out.println(student);
         } else {
           System.out.println("Нечего отменять");
         }
       }
       case 7 -> {
-        if (student.actionForward()) {
+        if (student.redo()) {
           System.out.println(student);
         } else {
           System.out.println("Нечего отменять");
@@ -95,5 +98,35 @@ public class Main {
       default -> System.out.println("Не существует команды с таким номером");
     }
     return true;
+  }
+
+  public static void test() {
+    Student st_test = new Student("banana", new ArrayList(List.of(1, 2, 3)));
+    System.out.println(st_test);
+    st_test.setName("grew");
+    System.out.println(st_test);
+    st_test.redo();
+    System.out.println(st_test);
+    st_test.undo();
+    System.out.println(st_test);
+    st_test.undo();
+    System.out.println(st_test);
+    st_test.set(1, 4);
+    System.out.println(st_test);
+    st_test.undo();
+    System.out.println(st_test);
+    st_test.redo();
+    System.out.println(st_test);
+    st_test.add(7);
+    System.out.println(st_test);
+    st_test.undo();
+    System.out.println(st_test);
+    st_test.undo();
+    System.out.println(st_test);
+    st_test.undo();
+    System.out.println(st_test);
+    st_test.undo();
+    System.out.println(st_test);
+    st_test.undo();
   }
 }
