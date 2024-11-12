@@ -9,49 +9,62 @@ class Student<T> {
   private LinkedList<T> grades;
   private String name;
   private final Predicate<T> gradeValidator;
+  private ActionManager actionManager;
 
-  private Stack<HistoryEntry> history;
-  private Stack<HistoryEntry> reverseHistory;
-  private Action currentAction = Action.ActionOrdinary;
-
-  public enum Action {
-    ActionBack,
-    ActionForward,
-    ActionOrdinary
+  private enum Action {
+    UNDO,
+    REDO,
+    ORDINARY
   }
 
-  private static class HistoryEntry {
+  private static class ActionManager {
 
-    String action;
-    int index;
-    Object value;
+    private Stack<Runnable> history;
+    private Stack<Runnable> reverseHistory;
+    private Action status;
 
-    HistoryEntry(String action, int index, Object value) {
-      this.action = action;
-      this.index = index;
-      this.value = value;
+    ActionManager() {
+      history = new Stack<>();
+      reverseHistory = new Stack<>();
+      status = Action.ORDINARY;
     }
 
-    HistoryEntry(String action, int index) {
-      this.action = action;
-      this.index = index;
+    void push(Runnable action) {
+      switch (status) {
+        case Action.UNDO -> reverseHistory.push(action);
+        case Action.REDO -> history.push(action);
+        case Action.ORDINARY -> {
+          history.push(action);
+          reverseHistory.clear();
+        }
+      }
     }
 
-    HistoryEntry(String action, String str) {
-      this.action = action;
-      this.value = str;
-      index = -1;
+    public void setStatus(Action status) {
+      this.status = status;
     }
 
+    public Action getStatus() {
+      return status;
+    }
+
+    public Runnable get() {
+      if (status == Action.UNDO && !history.empty()) {
+        return history.pop();
+      }
+      if (status == Action.REDO && !reverseHistory.empty()) {
+        return reverseHistory.pop();
+      }
+      return null;
+    }
   }
 
 
   public Student(String name, Predicate<T> validator) {
     grades = new LinkedList<>();
-    history = new Stack<>();
-    reverseHistory = new Stack<>();
     this.name = name;
     gradeValidator = validator != null ? validator : grade -> true;
+    actionManager = new ActionManager();
   }
 
   public Student(String name) {
@@ -94,12 +107,14 @@ class Student<T> {
   }
 
   public void setName(String s) {
-    addHistory(new HistoryEntry("setName", name));
+    var oldName = name;
+    // даже new String(name) не работает, так как он смотрит на поле при run
+    actionManager.push(() -> setName(oldName));
     name = s;
   }
 
   public ArrayList<T> getGrades() {
-    return new ArrayList<T>(grades);
+    return new ArrayList<>(grades);
   }
 
   public T get(int index) {
@@ -110,7 +125,8 @@ class Student<T> {
   public void set(int index, T value) {
     checkIndex(index);
     checkGrade(value);
-    addHistory(new HistoryEntry("set", index, value));
+    T oldValue = get(index);
+    actionManager.push(() -> set(index, oldValue)); // просто get(index) не работает
     grades.set(index, value);
   }
 
@@ -121,8 +137,8 @@ class Student<T> {
       checkIndex(index);
     }
     checkGrade(grade);
+    actionManager.push(() -> remove(index));
     grades.add(index, grade);
-    addHistory(new HistoryEntry("add", index));
   }
 
   public void add(T grade) {
@@ -131,7 +147,8 @@ class Student<T> {
 
   public void remove(int index) {
     checkIndex(index);
-    addHistory(new HistoryEntry("remove", index, grades.get(index)));
+    T removedValue = grades.get(index);
+    actionManager.push(() -> add(index, removedValue));
     grades.remove(index);
   }
 
@@ -139,46 +156,23 @@ class Student<T> {
     remove(size() - 1);
   }
 
-
-  private void addHistory(HistoryEntry historyEntry) {
-    // действия отмены реализовано, как в браузерах, то есть
-    // надо очищать reverseHistory при обычном действии, а
-    // при действии отмены надо добавлять его в history или reverseHistory
-    switch (currentAction) {
-      case Action.ActionOrdinary -> {
-        history.add(historyEntry);
-        reverseHistory.clear();
-      }
-      case Action.ActionBack -> reverseHistory.add(historyEntry);
-      case Action.ActionForward -> history.add(historyEntry);
-    }
-  }
-
-  private boolean cancelAction() {
-    var source = currentAction == Action.ActionBack ? history : reverseHistory;
-    if (source.empty()) {
-      currentAction = Action.ActionOrdinary;
+  private boolean cancelAction(Action typeOfAction) {
+    actionManager.setStatus(typeOfAction);
+    Runnable action = actionManager.get();
+    if (action == null) {
       return false;
     }
-    HistoryEntry historyEntry = source.pop();
-    switch (historyEntry.action) {
-      case "setName" -> setName((String) historyEntry.value);
-      case "set" -> set(historyEntry.index, (T) historyEntry.value);
-      case "add" -> remove(historyEntry.index);
-      case "remove" -> add(historyEntry.index, (T) historyEntry.value);
-    }
-    currentAction = Action.ActionOrdinary;
+    action.run();
+    actionManager.setStatus(Action.ORDINARY);
     return true;
   }
 
-  public boolean actionBack() {
-    currentAction = Action.ActionBack;
-    return cancelAction();
+  public boolean undo() {
+    return cancelAction(Action.UNDO);
   }
 
-  public boolean actionForward() {
-    currentAction = Action.ActionForward;
-    return cancelAction();
+  public boolean redo() {
+    return cancelAction(Action.REDO);
   }
 
 
