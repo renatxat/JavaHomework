@@ -1,12 +1,13 @@
-import java.util.LinkedList;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.LinkedList;
 import java.util.Objects;
 import java.util.Stack;
 import java.util.function.Predicate;
 
 class Student<T> {
 
-  private LinkedList<T> grades;
+  private List<T> grades;
   private String name;
   private final Predicate<T> gradeValidator;
   private ActionManager actionManager;
@@ -17,10 +18,15 @@ class Student<T> {
     ORDINARY
   }
 
+  @FunctionalInterface
+  public interface VoidFunction {
+    void execute();
+  }
+
   private static class ActionManager {
 
-    private Stack<Runnable> history;
-    private Stack<Runnable> reverseHistory;
+    private Stack<VoidFunction> history;
+    private Stack<VoidFunction> reverseHistory;
     private Action status;
 
     ActionManager() {
@@ -29,11 +35,11 @@ class Student<T> {
       status = Action.ORDINARY;
     }
 
-    void push(Runnable action) {
+    void push(VoidFunction action) {
       switch (status) {
-        case Action.UNDO -> reverseHistory.push(action);
-        case Action.REDO -> history.push(action);
-        case Action.ORDINARY -> {
+        case UNDO -> reverseHistory.push(action);
+        case REDO -> history.push(action);
+        case ORDINARY -> {
           history.push(action);
           reverseHistory.clear();
         }
@@ -48,7 +54,7 @@ class Student<T> {
       return status;
     }
 
-    public Runnable get() {
+    public VoidFunction get() {
       if (status == Action.UNDO && !history.empty()) {
         return history.pop();
       }
@@ -71,14 +77,17 @@ class Student<T> {
     this(name, grade -> true);
   }
 
-  public Student(String name, ArrayList<T> grades, Predicate<T> validator) {
+  public Student(String name, List<T> grades, Predicate<T> validator) {
     this(name, validator);
-    for (T grade : grades) {
+    ArrayList<T> copyGrades = new ArrayList<>(grades);
+    this.grades = grades;
+    this.grades.clear(); // Создаём пустой список той же реализации List
+    for (T grade : copyGrades) {
       add(grade);
     }
   }
 
-  public Student(String name, ArrayList<T> grades) {
+  public Student(String name, List<T> grades) {
     this(name, grades, grade -> true);
   }
 
@@ -108,13 +117,13 @@ class Student<T> {
 
   public void setName(String s) {
     var oldName = name;
-    // даже new String(name) не работает, так как он смотрит на поле при run
-    actionManager.push(() -> setName(oldName));
+    // даже new String(name) не работает, так как он смотрит на поле при execute
+    actionManager.push(() -> this.setName(oldName));
     name = s;
   }
 
-  public ArrayList<T> getGrades() {
-    return new ArrayList<>(grades);
+  public List<T> getGrades() {
+    return grades;
   }
 
   public T get(int index) {
@@ -158,11 +167,11 @@ class Student<T> {
 
   private boolean cancelAction(Action typeOfAction) {
     actionManager.setStatus(typeOfAction);
-    Runnable action = actionManager.get();
+    VoidFunction action = actionManager.get();
     if (action == null) {
       return false;
     }
-    action.run();
+    action.execute();
     actionManager.setStatus(Action.ORDINARY);
     return true;
   }

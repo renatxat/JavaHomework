@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -7,9 +8,8 @@ public class Main {
   private static Student<Integer> student;
 
   public static void main(String[] args) {
-    // test();
-    Scanner scanner = new Scanner(System.in);
-    try {
+    test();
+    try (Scanner scanner = new Scanner(System.in)) {
       while (true) {
         if (!takeStep(scanner)) {
           System.out.println("Работа программы завершена");
@@ -17,7 +17,6 @@ public class Main {
         }
       }
     } catch (Exception e) {
-      scanner.close();
       System.err.println("Произошла ошибка: " + e.getMessage());
     }
   }
@@ -128,5 +127,20 @@ public class Main {
     st_test.undo();
     System.out.println(st_test);
     st_test.undo();
+/*
+banana: [1, 2, 3]
+grew: [1, 2, 3]
+grew: [1, 2, 3]
+banana: [1, 2, 3]
+banana: [1, 2]
+banana: [1, 4]
+banana: [1, 2]
+banana: [1, 4]
+banana: [1, 4, 7]
+banana: [1, 4]
+banana: [1, 2]
+banana: [1]
+banana: []
+*/
   }
 }
