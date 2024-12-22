@@ -22,7 +22,7 @@ public class UtilsTest {
     System.setOut(new PrintStream(outputStreamCaptor));
 
     A a = new A();
-    cachedA = (A) Utils.cache(a);
+    cachedA = Utils.cache(a);
   }
 
   @RepeatedTest(3)
