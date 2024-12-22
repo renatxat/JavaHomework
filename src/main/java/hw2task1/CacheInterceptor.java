@@ -15,14 +15,14 @@ import net.bytebuddy.implementation.bind.annotation.This;
  * Класс, реализующий кэширование результатов методов, помеченных аннотацией {@link Cache}, и сброс
  * кэширования при использовании методов, помеченных аннотацией {@link Setter}. Каждый метод
  * заменяется на intercept, который внутри себя вызывает оригинальный метод или возвращает его
- * кэшированный результат.
+ * кэшированный результат. Не работает с final классами и классами без дефолтного конструктора.
  */
 public class CacheInterceptor {
 
-  private final Object originalObject;
-  private final HashMap<MethodAndArguments, Object> cache;
+  protected final Object originalObject;
+  protected final HashMap<MethodAndArguments, Object> cache;
 
-  static class MethodAndArguments {
+  static protected class MethodAndArguments {
 
     private final Method method;
     private final Object[] args;
