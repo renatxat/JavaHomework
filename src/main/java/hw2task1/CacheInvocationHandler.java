@@ -22,6 +22,10 @@ public class CacheInvocationHandler extends CacheInterceptor implements Invocati
    *               {@code java.lang.Boolean}.
    * @return Изменяет только методы, унаследованные из интерфейсов и помеченные соответствующей
    * аннотацией в реализации. Просто повторяет логику {@link CacheInterceptor#intercept}.
+   * <p>
+   * Так как заменяет не все методы класса, а только унаследованные из интерфейса, то используется
+   * только в особых ситуациях, когда это действительно необходимо. А именно, когда класс является
+   * final, и когда у него отсутствует дефолтный конструктор.
    */
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
