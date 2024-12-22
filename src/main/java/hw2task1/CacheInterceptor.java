@@ -65,6 +65,11 @@ public class CacheInterceptor {
       @Empty Object defaultValue) throws Throwable {
     method.setAccessible(true);
     MethodAndArguments methodArgs = new MethodAndArguments(method, args);
+    // Если метод помечен и @Setter и @Cache, то мы игнорируем Cache аннотацию
+    if (method.isAnnotationPresent(Setter.class)) {
+      cache.clear();
+      return method.invoke(originalObject, args);
+    }
     if (method.isAnnotationPresent(Cache.class)) {
       if (cache.containsKey(methodArgs)) {
         // Нужно, если метод вызывается не впервые
@@ -74,10 +79,7 @@ public class CacheInterceptor {
       cache.put(methodArgs, result);
       return result;
     }
-
-    if (method.isAnnotationPresent(Setter.class)) {
-      cache.clear();
-    }
+    // По идее код сюда не доходит, так как мы обрабатываем только 2 аннотации
     return method.invoke(originalObject, args);
   }
 }
