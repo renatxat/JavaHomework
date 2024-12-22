@@ -7,7 +7,7 @@ public class Main {
   public static void main(String[] args)
       throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
     A a = new A();
-    A cachedA = (A) Utils.cache(a);
+    A cachedA = Utils.cache(a);
 
     cachedA.setValue("Hello");
     System.out.println(cachedA.mainMethod());

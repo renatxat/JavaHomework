@@ -1,7 +1,10 @@
-В данном репозитории вы являетесь Developer'ом, т.е. не можете делать push в мастер ветку. Вам нужно
-запушить код в ветку \<homeworkName\>taskN, а затем сделать merge request в master.
+## Hw-reflection
 
-Если у вас падает в runtime с ошибкой доступа, то попробуйте:
+[Ссылка на оригинальное условие задания](https://docs.google.com/document/d/1PX8RtOOvL1C4cdNWnf_jvqRZQMsppG2x/edit?usp=sharing&ouid=100858605223823752484&rtpof=true&sd=true)
+
+TLDR: реализация кэширования результатов методов, помеченных аннотацией @Cache
+
+Если при запуске у вас падает в runtime с ошибкой доступа, то попробуйте сделать следующее:
 Edit configuration (слева от кнопки запуска) -> Modify options -> VM options:
 --add-exports=java.base/sun.nio.ch=ALL-UNNAMED
 --add-opens=java.base/java.lang=ALL-UNNAMED
@@ -13,7 +16,9 @@ Edit configuration (слева от кнопки запуска) -> Modify optio
 --add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED
 
 
+
 MVP переопределения нескольких методов с bytebuddy:
+
 ```java
 package hw2task1;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
