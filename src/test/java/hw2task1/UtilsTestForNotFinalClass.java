@@ -8,7 +8,7 @@ import java.io.PrintStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class UtilsTest {
+public class UtilsTestForNotFinalClass {
 
   private A cachedA;
   private String currStr = "Hello";
@@ -22,7 +22,7 @@ public class UtilsTest {
     System.setOut(new PrintStream(outputStreamCaptor));
 
     A a = new A();
-    cachedA = Utils.cache(a);
+    cachedA = (A) Utils.cache(a);
   }
 
   @RepeatedTest(3)
