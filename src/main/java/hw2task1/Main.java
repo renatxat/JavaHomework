@@ -7,7 +7,7 @@ public class Main {
   public static void main(String[] args)
       throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
     A a = new A();
-    AInterface cachedA = (AInterface) Utils.cache(a);
+    A cachedA = (A) Utils.cache(a);
 
     cachedA.setValue("Hello");
     System.out.println(cachedA.mainMethod());
@@ -15,14 +15,13 @@ public class Main {
     System.out.println(cachedA.mainMethod());
     // Не выводит "original method", ожидается кэшированный "Hello"
 
-
     AFinal af = new AFinal("not_empty_string");
-    cachedA = (AInterface) Utils.cache(af);
+    AInterface cachedAFinal = (AInterface) Utils.cache(af);
 
-    cachedA.setValue("Hello");
-    System.out.println(cachedA.mainMethod());
+    cachedAFinal.setValue("Hello");
+    System.out.println(cachedAFinal.mainMethod());
     // Ожидается: "original method" и "Hello"
-    System.out.println(cachedA.mainMethod());
+    System.out.println(cachedAFinal.mainMethod());
     // Не выводит "original method", ожидается кэшированный "Hello"
   }
 }
