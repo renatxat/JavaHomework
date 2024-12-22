@@ -1,9 +1,10 @@
 package hw2task1;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import org.junit.jupiter.api.RepeatedTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -132,7 +133,7 @@ public class UtilsTest {
     outputStreamCaptor.reset();
   }
 
-  @org.junit.jupiter.api.AfterEach
+  @AfterEach
   public void tearDown() {
     System.setOut(originalOut);
   }
