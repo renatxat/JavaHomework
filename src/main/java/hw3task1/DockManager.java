@@ -1,9 +1,11 @@
-package org.example;
+package hw3task1;
 
 /**
- * Это менеджер причалов для погрузки, который предоставляет доступ к причалам по типу груза
- * Реализован с помощью потокобезопасный синглтона, чтобы можно было досдать нужный причал прямо
- * внутри класса Ship
+ * Это менеджер причалов для погрузки, который предоставляет доступ к причалам по типу груза. Для
+ * каждого типа груза создаётся ровно один причал. Логика ожидания начало погрузки реализована в
+ * {@link Dock} Реализован с помощью потокобезопасный синглтона, чтобы можно было запросить нужный
+ * причал из любого места в коде. На самом деле, хватает и обычного синглтона, так как нет борьбы за
+ * ресурс.
  */
 public class DockManager {
 
@@ -29,7 +31,10 @@ public class DockManager {
     return instance;
   }
 
-  // Метод для получения дока по типу груза
+  /**
+   * @param cargoType
+   * @return возвращает док по типу груза
+   */
   public Dock getDock(CargoType cargoType) {
     if (instance == null) {
       throw new IllegalStateException("DockManager is not initialized");
@@ -42,7 +47,7 @@ public class DockManager {
     };
   }
 
-  static void close() {
+  public static void close() {
     if (instance == null) {
       throw new IllegalStateException("DockManager is not initialized");
     }

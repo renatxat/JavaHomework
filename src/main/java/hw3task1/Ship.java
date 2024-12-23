@@ -1,6 +1,6 @@
-package org.example;
+package hw3task1;
 
-public class Ship implements Runnable {
+public class Ship {
 
   private final int id;
   private final CargoType cargoType;
@@ -12,15 +12,10 @@ public class Ship implements Runnable {
     this.capacity = capacity;
   }
 
-  @Override
-  public void run() {
-    try {
-      DockManager dockManager = DockManager.getInstance();
-      Dock dock = dockManager.getDock(cargoType);
-      dock.loadCargo(this); // Погрузка товара
-    } catch (Exception e) {
-      throw e;
-    }
+  public void sendForLoading() {
+    DockManager dockManager = DockManager.getInstance();
+    Dock dock = dockManager.getDock(cargoType);
+    dock.loadCargo(this); // Погрузка товара
   }
 
   public CapacityType getCapacity() {

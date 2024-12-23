@@ -1,4 +1,4 @@
-package org.example;
+package hw3task1;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -7,9 +7,9 @@ import org.junit.jupiter.api.Test;
 class ShipTest {
 
   @Test
-  void run() {
+  void sendForLoading() {
     Ship ship = new Ship(CargoType.BREAD, CapacityType.LARGE, 1);
-    ship.run();
+    ship.sendForLoading();
   }
 
   @Test
