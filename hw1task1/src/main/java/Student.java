@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Objects;
@@ -10,23 +10,22 @@ class Student<T> {
   private List<T> grades;
   private String name;
   private final Predicate<T> gradeValidator;
-  private ActionManager actionManager;
+  private final ActionManager actionManager;
 
   private enum Action {
-    UNDO,
-    REDO,
-    ORDINARY
+    UNDO, REDO, ORDINARY
   }
 
   @FunctionalInterface
   public interface VoidFunction {
+
     void execute();
   }
 
   private static class ActionManager {
 
-    private Stack<VoidFunction> history;
-    private Stack<VoidFunction> reverseHistory;
+    private final Stack<VoidFunction> history;
+    private final Stack<VoidFunction> reverseHistory;
     private Action status;
 
     ActionManager() {
@@ -77,12 +76,19 @@ class Student<T> {
     this(name, grade -> true);
   }
 
+  /**
+   * Сохраняем переданную имплементацию List в this.grades, а затем заново вставляем все переданные
+   * элементы, чтобы они прошли проверку валидатором
+   */
   public Student(String name, List<T> grades, Predicate<T> validator) {
     this(name, validator);
-    ArrayList<T> copyGrades = new ArrayList<>(grades);
-    this.grades = grades;
-    this.grades.clear(); // Создаём пустой список той же реализации List
-    for (T grade : copyGrades) {
+    try {
+      this.grades = grades.getClass().getDeclaredConstructor().newInstance();
+    } catch (Exception e) {
+      // Если в конструкторе без аргументов проблемы — fallback (или выбрасываем исключение)
+      throw new IllegalStateException("Не удалось создать новый экземпляр List", e);
+    }
+    for (T grade : grades) {
       add(grade);
     }
   }
@@ -101,8 +107,7 @@ class Student<T> {
   protected void checkIndex(int index) {
     if (index < 0 || index >= size()) {
       throw new IndexOutOfBoundsException(
-          "Индекс " + index
-              + " выходит за границы контейнера размера " + size());
+          "Индекс " + index + " выходит за границы контейнера размера " + size());
     }
   }
 
@@ -122,8 +127,11 @@ class Student<T> {
     name = s;
   }
 
+  /**
+   * @return Возвращает специальную версию List read only
+   */
   public List<T> getGrades() {
-    return grades;
+    return Collections.unmodifiableList(grades);
   }
 
   public T get(int index) {
@@ -198,8 +206,7 @@ class Student<T> {
     if (!(o instanceof Student<?> student)) {
       return false;
     }
-    return Objects.equals(grades, student.grades) && Objects.equals(
-        name, student.name);
+    return Objects.equals(grades, student.grades) && Objects.equals(name, student.name);
   }
 
   @Override
