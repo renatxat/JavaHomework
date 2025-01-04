@@ -80,6 +80,7 @@ class Student<T> {
    * Сохраняем переданную имплементацию List в this.grades, а затем заново вставляем все переданные
    * элементы, чтобы они прошли проверку валидатором
    */
+  @SuppressWarnings("unchecked")
   public Student(String name, List<T> grades, Predicate<T> validator) {
     this(name, validator);
     try {

@@ -1,5 +1,4 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main {
@@ -98,8 +97,9 @@ public class Main {
     return true;
   }
 
+  @SuppressWarnings("unchecked")
   public static void test() {
-    Student st_test = new Student("banana", new ArrayList(List.of(1, 2, 3)));
+    Student st_test = new Student("banana", Arrays.asList(1, 2, 3));
     System.out.println(st_test);
     st_test.setName("grew");
     System.out.println(st_test);
