@@ -1,5 +1,3 @@
-package hw3task1;
-
 import static java.lang.Math.abs;
 import static org.junit.jupiter.api.Assertions.*;
 

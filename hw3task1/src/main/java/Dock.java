@@ -1,5 +1,3 @@
-package hw3task1;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -35,8 +33,8 @@ public class Dock {
           "Dock for " + cargoType + " is loading ship " + ship.getId() + " with "
               + ship.getCapacity() + " capacity");
       try {
-        Thread.sleep((long) ONE_SECOND * ship.getCapacity().get() / LOAD_COEFFICIENT);
         // Имитация загрузки товара
+        Thread.sleep((long) ONE_SECOND * ship.getCapacity().get() / LOAD_COEFFICIENT);
         System.out.println("Ship " + ship.getId() + " is fully loaded");
       } catch (InterruptedException e) {
         throw new RuntimeException(

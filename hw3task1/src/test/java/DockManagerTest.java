@@ -1,5 +1,3 @@
-package hw3task1;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -13,11 +11,6 @@ class DockManagerTest {
   @BeforeAll
   static void setUp() {
     dockManager = DockManager.getInstance();
-  }
-
-  @AfterAll
-  static void tearDown() {
-    DockManager.close(); // Закрываем все доки после тестов
   }
 
   @Test
@@ -56,15 +49,18 @@ class DockManagerTest {
   }
 
   @Test
-  void testCloseDocks() {
-    // Проверяем, что метод close() не вызывает исключений
-    assertDoesNotThrow(DockManager::close);
-  }
-
-  @Test
   void testDoubleInitialization() {
     // Убедимся, что менеджер доков не может быть инициализирован дважды
     DockManager anotherInstance = DockManager.getInstance();
     assertSame(dockManager, anotherInstance);
+  }
+
+  @AfterAll
+  static void testCloseDocks() {
+    // Проверяем, что метод close() не вызывает исключений
+    assertDoesNotThrow(DockManager::close);
+    // Проверяем, что метод close() нельзя вызвать повторно
+    assertThrows(IllegalStateException.class, DockManager::close);
+    // Заодно закрыли все доки после тестов
   }
 }

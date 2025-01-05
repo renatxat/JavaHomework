@@ -1,5 +1,3 @@
-package hw3task1;
-
 import java.util.concurrent.ThreadLocalRandom;
 
 public enum CargoType {

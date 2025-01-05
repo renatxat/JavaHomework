@@ -1,5 +1,3 @@
-package hw3task1;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -34,7 +32,6 @@ public class Tunnel {
         ship.sendForLoading();
         System.out.println("Ship " + ship.getId() + " has exited the tunnel");
       } catch (InterruptedException e) {
-        // TODO
         throw new RuntimeException(
             "An error occurred while the ship " + ship.getId() +
                 " was passing through the tunnel", e);

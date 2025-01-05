@@ -1,5 +1,3 @@
-package hw3task1;
-
 public class Ship {
 
   private final int id;
