@@ -1,5 +1,3 @@
-package hw2task1;
-
 public final class AFinal extends AParent implements AInterface {
 
   private String value;

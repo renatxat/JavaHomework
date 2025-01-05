@@ -4,8 +4,18 @@
 
 TLDR: реализация кэширования результатов методов, помеченных аннотацией @Cache
 
-Если при запуске у вас падает в runtime с ошибкой доступа, то попробуйте сделать следующее:
+Как запустить jar:
+```shell
+mvn clean package
+target/hw2task1.jar
+java -jar target/hw2task1-1.0.jar
+```
+
+
+
+Если при запуске проекта у вас падает в runtime с ошибкой доступа, то попробуйте сделать следующее:
 Edit configuration (слева от кнопки запуска) -> Modify options -> VM options:
+```
 --add-exports=java.base/sun.nio.ch=ALL-UNNAMED
 --add-opens=java.base/java.lang=ALL-UNNAMED
 --add-opens=java.base/java.lang.reflect=ALL-UNNAMED
@@ -14,11 +24,9 @@ Edit configuration (слева от кнопки запуска) -> Modify optio
 --add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED
 --add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED
 --add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED
-
-
+```
 
 MVP переопределения нескольких методов с bytebuddy:
-
 ```java
 package hw2task1;
 import net.bytebuddy.implementation.bind.annotation.RuntimeType;
@@ -38,6 +46,8 @@ public class CacheInterceptor {
     return "goal";
   }
 }
+
+
 
 import java.lang.reflect.Method;
 import net.bytebuddy.implementation.bind.annotation.AllArguments;
@@ -66,6 +76,7 @@ public class A {
     return value;
   }
 }
+
 
 
 import java.lang.reflect.InvocationTargetException;

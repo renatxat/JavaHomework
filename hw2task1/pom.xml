@@ -3,9 +3,10 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>hatymovre</groupId>
-  <artifactId>Reflection</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <groupId>JavaHomework</groupId>
+  <artifactId>hw2task1</artifactId>
+  <version>1.0</version>
+  <name>Cache</name>
   <packaging>jar</packaging>
 
   <properties>
@@ -21,7 +22,7 @@
     <dependency>
       <groupId>net.bytebuddy</groupId>
       <artifactId>byte-buddy</artifactId>
-      <version>1.15.8</version> <!-- Укажите последнюю доступную версию -->
+      <version>1.15.8</version>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -81,8 +82,8 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>hw2task1/Main
-              </mainClass> <!-- Убедитесь, что указан правильный путь к вашему главному классу -->
+              <mainClass>Main
+              </mainClass>
             </manifest>
           </archive>
         </configuration>
@@ -104,7 +105,7 @@
             <argument>--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</argument>
             <argument>-cp</argument>
             <classpath/>
-            <argument>hw2task1/Main</argument>
+            <argument>Main</argument>
           </arguments>
         </configuration>
       </plugin>

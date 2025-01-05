@@ -1,5 +1,3 @@
-package hw2task1;
-
 public class A extends AParent implements AInterface {
 
   private String value;
@@ -46,3 +44,4 @@ public class A extends AParent implements AInterface {
     return 2024;
   }
 }
+

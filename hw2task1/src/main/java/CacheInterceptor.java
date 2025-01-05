@@ -1,5 +1,3 @@
-package hw2task1;
-
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -19,18 +17,10 @@ import net.bytebuddy.implementation.bind.annotation.This;
  */
 public class CacheInterceptor {
 
-  protected final Object originalObject;
-  protected final HashMap<MethodAndArguments, Object> cache;
+  private final Object originalObject;
+  private final HashMap<MethodAndArguments, Object> cache;
 
-  static protected class MethodAndArguments {
-
-    private final Method method;
-    private final Object[] args;
-
-    public MethodAndArguments(Method method, Object[] args) {
-      this.method = method;
-      this.args = args;
-    }
+  private record MethodAndArguments(Method method, Object[] args) {
 
     @Override
     public boolean equals(Object o) {
@@ -56,6 +46,10 @@ public class CacheInterceptor {
     cache = new HashMap<>();
   }
 
+  public Class<?> getClassObject() {
+    return originalObject.getClass();
+  }
+
   @RuntimeType
   public Object intercept(
       @This Object self,
@@ -79,7 +73,8 @@ public class CacheInterceptor {
       cache.put(methodArgs, result);
       return result;
     }
-    // По идее код сюда не доходит, так как мы обрабатываем только 2 аннотации
+    // Используется, если метод не помечен ни @Setter, ни @Cache
+    // Такое может происходить при обработке методов изнутри CacheInvocationHandler
     return method.invoke(originalObject, args);
   }
 }

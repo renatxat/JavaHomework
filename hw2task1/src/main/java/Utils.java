@@ -1,5 +1,3 @@
-package hw2task1;
-
 import static net.bytebuddy.matcher.ElementMatchers.isAnnotatedWith;
 
 import java.lang.reflect.Constructor;
@@ -16,13 +14,15 @@ public class Utils {
 
   /**
    * @param obj Любой объект.
-   * @return Объект того же типа, в котором переопределены методы, помеченные аннотациями
+   * @return Объект класса Object, в котором переопределены методы, помеченные аннотациями
    * {@link Cache} и {@link Setter}. Если объект принадлежит final-классу или не имеет конструктора
    * по умолчанию, то все методы, реализованные в нём из интерфейсов и помеченные соответствующей
-   * аннотацией в реализации (не интерфейсе) заменяются при помощи проксирования (Proxy).
-   * В ином же случае для изменения методов объекта в Runtime
-   * используется библиотека
-   * @see <a href="https://javadoc.io/doc/net.bytebuddy/byte-buddy/latest/index.html">ByteBuddy</a>
+   * аннотацией в реализации (не интерфейсе) заменяются при помощи проксирования (Proxy). В ином же
+   * случае для изменения методов объекта в Runtime используется библиотека
+   * @see <a href="https://javadoc.io/doc/net.bytebuddy/byte-buddy/latest/index.html">ByteBuddy</a>,
+   * изменяются как унаследованные методы из интерфейсов/родителей, так и методы самого класса.
+   * <p>
+   * Работает только для публичных классов.
    */
   public static Object cache(Object obj)
       throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {

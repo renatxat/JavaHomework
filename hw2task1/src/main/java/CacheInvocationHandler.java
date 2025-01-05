@@ -1,12 +1,19 @@
-package hw2task1;
-
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
-public class CacheInvocationHandler extends CacheInterceptor implements InvocationHandler {
+/**
+ * Класс, реализующий кэширование результатов методов, помеченных аннотацией {@link Cache}, и сброс
+ * кэширования при использовании методов, помеченных аннотацией {@link Setter}. Работает только для
+ * классов, унаследованных от интерфейсов. В реализации перехвата методов используется
+ * {@link CacheInterceptor}. Используется для работы с final классами и классами без дефолтного
+ * конструктора, так имеет сильные ограничения на методы, для которых может использоваться.
+ */
+public class CacheInvocationHandler implements InvocationHandler {
+
+  CacheInterceptor cacheInterceptor;
 
   public CacheInvocationHandler(Object originalObject) {
-    super(originalObject);
+    this.cacheInterceptor = new CacheInterceptor(originalObject);
   }
 
   /**
@@ -29,8 +36,9 @@ public class CacheInvocationHandler extends CacheInterceptor implements Invocati
    */
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-    Method originalMethod = originalObject.getClass()
+    // Получаем оригинальный метод, а не метод из интерфейса
+    Method originalMethod = cacheInterceptor.getClassObject()
         .getMethod(method.getName(), method.getParameterTypes());
-    return intercept(null, originalMethod, args, null, null);
+    return cacheInterceptor.intercept(null, originalMethod, args, null, null);
   }
 }

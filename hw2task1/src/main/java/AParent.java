@@ -1,5 +1,3 @@
-package hw2task1;
-
 public class AParent {
 
   private String valueParent;

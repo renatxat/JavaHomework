@@ -1,5 +1,3 @@
-package hw2task1;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
@@ -8,7 +6,7 @@ import java.io.PrintStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class UtilsTestForNotFinalClass {
+public class NotFinalUtilsTest {
 
   private A cachedA;
   private String currStr = "Hello";
@@ -34,7 +32,6 @@ public class UtilsTestForNotFinalClass {
 
     assertEquals(currStr, cachedA.mainMethod());
     assertEquals("", outputStreamCaptor.toString().trim());
-    outputStreamCaptor.reset();
   }
 
   @RepeatedTest(3)
@@ -46,7 +43,6 @@ public class UtilsTestForNotFinalClass {
 
     assertEquals("new", cachedA.newMethod());
     assertEquals("", outputStreamCaptor.toString().trim());
-    outputStreamCaptor.reset();
   }
 
   @RepeatedTest(3)
@@ -59,7 +55,6 @@ public class UtilsTestForNotFinalClass {
 
     assertEquals(currStr, cachedA.parentMethod());
     assertEquals("", outputStreamCaptor.toString().trim());
-    outputStreamCaptor.reset();
   }
 
   @RepeatedTest(3)
@@ -71,7 +66,6 @@ public class UtilsTestForNotFinalClass {
 
     cachedA.defaultMethod();
     assertEquals("original method", outputStreamCaptor.toString().trim());
-    outputStreamCaptor.reset();
   }
 
   @RepeatedTest(3)
@@ -83,7 +77,6 @@ public class UtilsTestForNotFinalClass {
 
     cachedA.voidMethod();
     assertEquals("", outputStreamCaptor.toString().trim());
-    outputStreamCaptor.reset();
   }
 
   @RepeatedTest(3)
@@ -95,7 +88,6 @@ public class UtilsTestForNotFinalClass {
 
     assertEquals(2024, cachedA.methodWithoutCache());
     assertEquals("original method", outputStreamCaptor.toString().trim());
-    outputStreamCaptor.reset();
   }
 
   @RepeatedTest(3)
@@ -108,7 +100,6 @@ public class UtilsTestForNotFinalClass {
 
     assertEquals(tempStr, cachedA.overwrittenMethod(tempStr));
     assertEquals("original method", outputStreamCaptor.toString().trim());
-    outputStreamCaptor.reset();
   }
 
   @RepeatedTest(3)
@@ -130,7 +121,6 @@ public class UtilsTestForNotFinalClass {
 
     cachedA.parentMethod();
     assertEquals("original method", outputStreamCaptor.toString().trim());
-    outputStreamCaptor.reset();
   }
 
   @AfterEach
